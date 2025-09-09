@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header Section */
+    .header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+    }
+
+    h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff, #e0e7ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 300;
+      margin-top: 10px;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Blog Grid */
+    .blog-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    /* Blog Cards */
+    .blog-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blog-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .blog-card:hover::before {
+      left: 100%;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .blog-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-card p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1rem;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .empty-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 30px;
+    }
+
+    .no-blogs {
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .empty-subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* Back Button */
+    .back-section {
+      text-align: center;
+      padding-top: 40px;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      padding: 16px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .back-btn:hover::before {
+      left: 100%;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .back-btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 2.2rem;
+      }
+
+      .blog-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .blog-card {
+        padding: 25px;
+      }
+
+      .header {
+        padding: 40px 20px 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      .blog-card {
+        padding: 20px;
+      }
+
+      .back-btn {
+        padding: 14px 30px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h2 th:text="'Blogs by ' + ${username}">Blogs by User</h2>
+  <p class="subtitle">Your thoughts and insights in writing</p>
+</div>
+
+<div class="container">
+  <!-- Blogs List -->
+  <div class="blog-container" th:if="${vlogs.size() > 0}">
+    <div class="blog-card" th:each="vlog : ${vlogs}">
+      <h3 th:text="${vlog.title}">Blog Title</h3>
+      <p th:text="${vlog.vlogs}">Blog content description...</p>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" th:if="${vlogs.size() == 0}">
+    <div class="empty-icon">📝</div>
+    <p class="no-blogs">No blogs found yet</p>
+    <p class="empty-subtitle">Start your writing journey by adding your first blog and sharing your thoughts with the world!</p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="back-section">
+    <a th:href="@{/profile(username=${username})}" class="back-btn">
+      ← Back to Profile
+    </a>
+  </div>
+</div>
+
+</body>
+</html>
