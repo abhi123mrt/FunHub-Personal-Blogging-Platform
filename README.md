@@ -7,6 +7,9 @@ FunHub is a full-stack blogging web application built using Spring Boot, Spring 
 Tech Stack:
 
 Backend: Spring Boot, Spring Security, JPA/Hibernate, PostgreSQL
+
 Frontend: Thymeleaf, HTML, CSS, JavaScript
+
 Build Tool: Maven
+
 Server Port: 8081
